@@ -15,6 +15,7 @@ public class EmployeeService implements IEmployeeService {
     @Autowired
     private IEmployeesRepo employeesRepo;
 
+    @Override
     public List<EmployeeRes> GetAll() {
 
         var employees = employeesRepo.findAll();
@@ -27,6 +28,7 @@ public class EmployeeService implements IEmployeeService {
         return employeeResList;
     }
 
+    @Override
     public EmployeeRes Add(Employee employee) {
 
         var entry = employeesRepo.save(employee);

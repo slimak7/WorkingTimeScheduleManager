@@ -45,4 +45,9 @@ public class Record {
     public void setMonthYear(Date monthYear) {
         MonthYear = monthYear;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
 }
