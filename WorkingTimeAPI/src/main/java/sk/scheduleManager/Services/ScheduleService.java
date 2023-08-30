@@ -52,21 +52,11 @@ public class ScheduleService implements IScheduleService {
 
         possible.setEmployee(selectedEmployee);
 
-        var records = recordsRepo.findAll(Example.of(possible, ExampleMatcher.matchingAny()));
+        var records = recordsRepo.FindRecordByUserDate(possible.getEmployee().getID(), start.get(Calendar.MONTH) + 1, start.get(Calendar.YEAR));
 
         if (!records.isEmpty()) {
-
-            for (var record : records) {
-                var date = record.getMonthYear();
-
-                if (date.getMonth() == start.getTime().getMonth() && date.getYear() == start.getTime().getYear()) {
-
-                    throw new ScheduleDataAccessException("Record for given employee and date already exists.");
-                }
-            }
+            throw new ScheduleDataAccessException("Record for given employee and date already exists.");
         }
-
-
         possible.setEmployee(selectedEmployee);
         possible.setMonthYear(start.getTime());
         var created = recordsRepo.save(possible);
