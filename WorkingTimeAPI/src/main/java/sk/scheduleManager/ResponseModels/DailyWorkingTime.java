@@ -4,6 +4,9 @@ import java.sql.Time;
 
 public class DailyWorkingTime {
 
+    public DailyWorkingTime() {
+    }
+
     public DailyWorkingTime(int dayNumber, Time startTime, Time endTime) {
         DayNumber = dayNumber;
         StartTime = startTime;

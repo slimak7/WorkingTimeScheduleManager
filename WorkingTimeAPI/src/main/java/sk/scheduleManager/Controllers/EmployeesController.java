@@ -2,6 +2,8 @@ package sk.scheduleManager.Controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,19 +21,27 @@ public class EmployeesController {
     @Autowired
     private IEmployeeService employeeService;
     @GetMapping("/Employees/GetAll")
-    public List<EmployeeRes> GetAll() {
+    public ResponseEntity<Object> GetAll() {
 
-        var employees = employeeService.GetAll();
+        try {
+            return new ResponseEntity<>(employeeService.GetAll(), HttpStatus.OK);
+        }
+        catch (Exception ex) {
+            return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
-        return employees;
     }
 
     @PostMapping("/Employees/Add")
-    public EmployeeRes Add(@RequestBody EmployeeReq employee) {
+    public ResponseEntity<Object> Add(@RequestBody EmployeeReq employee) {
 
-        Employee newEmployee = new Employee();
-        newEmployee.setFirstName(employee.FirstName);
-        newEmployee.setLastName(employee.LastName);
-        return employeeService.Add(newEmployee);
+        try {
+
+            return new ResponseEntity<>(employeeService.Add(employee), HttpStatus.OK);
+        }
+        catch (Exception ex) {
+            return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
     }
 }

@@ -1,16 +1,16 @@
 package sk.scheduleManager.Services;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Component;
 import sk.scheduleManager.Exceptions.ScheduleDataAccessException;
-import sk.scheduleManager.Models.Employee;
 import sk.scheduleManager.Models.Record;
+import sk.scheduleManager.Models.Schedule;
+import sk.scheduleManager.Models.ScheduleID;
 import sk.scheduleManager.Repos.IEmployeesRepo;
 import sk.scheduleManager.Repos.IRecordsRepo;
 import sk.scheduleManager.Repos.IScheduleRepo;
 import sk.scheduleManager.RequestModels.NewScheduleReq;
+import sk.scheduleManager.RequestModels.UpdateScheduleReq;
 import sk.scheduleManager.ResponseModels.DailyWorkingTime;
 import sk.scheduleManager.ResponseModels.ScheduleRes;
 
@@ -35,10 +35,7 @@ public class ScheduleService implements IScheduleService {
 
         var possible = new Record();
 
-        Employee employee = new Employee();
-        employee.setID(newScheduleReq.EmployeeID);
-
-        var selectedEmployee = employeesRepo.findOne(Example.of(employee, ExampleMatcher.matchingAny())).orElse(null);
+        var selectedEmployee = employeesRepo.GetByID(newScheduleReq.EmployeeID);
 
         if (selectedEmployee == null) {
 
@@ -76,17 +73,80 @@ public class ScheduleService implements IScheduleService {
             var day = Calendar.getInstance();
             day.setTime(date);
             if (day.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY && day.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
-
-
                 startTime = new Time(new SimpleDateFormat("hh:mm").parse("8:00").getTime());
                 endTime = new Time(new SimpleDateFormat("hh:mm").parse("16:00").getTime());
-
-                dailyHours.add(new DailyWorkingTime(day.get(Calendar.DAY_OF_MONTH), startTime, endTime));
-
             }
+            else {
+                startTime = new Time(new SimpleDateFormat("hh:mm").parse("0:00").getTime());
+                endTime = new Time(new SimpleDateFormat("hh:mm").parse("0:00").getTime());
+            }
+            dailyHours.add(new DailyWorkingTime(day.get(Calendar.DAY_OF_MONTH), startTime, endTime));
         }
 
         return new ScheduleRes(created.getID(), created.getEmployee().getID(), start.getTime(), dailyHours);
 
+    }
+
+    @Override
+    public void Update(UpdateScheduleReq updateScheduleReq) throws ScheduleDataAccessException {
+
+        var record = recordsRepo.FindRecordByID(updateScheduleReq.RecordID);
+
+        if (record == null) {
+            throw  new ScheduleDataAccessException("There is no record with given ID.");
+        }
+
+        var workingHours = updateScheduleReq.WorkingHours;
+
+        for (var day : workingHours) {
+
+            var entry = scheduleRepo.GetByRecordIDDay(updateScheduleReq.RecordID, day.DayNumber);
+
+            if (entry == null) {
+
+                Schedule schedule = new Schedule();
+                ScheduleID scheduleID = new ScheduleID();
+                scheduleID.setRecord(record);
+                scheduleID.setDayNumber(day.DayNumber);
+                schedule.setScheduleID(scheduleID);
+                schedule.setStartTime(day.StartTime);
+                schedule.setEndTime(day.EndTime);
+
+                scheduleRepo.save(schedule);
+            }
+            else {
+
+                entry.setStartTime(day.StartTime);
+                entry.setEndTime(day.EndTime);
+
+                scheduleRepo.save(entry);
+            }
+        }
+    }
+
+    @Override
+    public ScheduleRes GetByID(String recordID) throws ScheduleDataAccessException {
+
+        var record = recordsRepo.FindRecordByID(recordID);
+
+        if (record == null) {
+            throw new ScheduleDataAccessException("There is no record for given ID.");
+        }
+
+        var entries = scheduleRepo.GetAllByRecordID(recordID);
+
+        if (entries.isEmpty()) {
+            throw new ScheduleDataAccessException("There is no schedule for given record ID.");
+        }
+        else {
+            List<DailyWorkingTime> dailyHours = new ArrayList<>();
+
+            for (var day : entries) {
+
+                dailyHours.add(new DailyWorkingTime(day.getScheduleID().getDayNumber(), day.getStartTime(), day.getEndTime()));
+            }
+
+            return new ScheduleRes(record.getID(), record.getEmployee().getID(), record.getMonthYear(), dailyHours);
+        }
     }
 }
