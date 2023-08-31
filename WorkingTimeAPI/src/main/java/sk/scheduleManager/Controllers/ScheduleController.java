@@ -4,20 +4,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpClientErrorException;
 import sk.scheduleManager.Exceptions.ScheduleDataAccessException;
 import sk.scheduleManager.RequestModels.NewScheduleReq;
 import sk.scheduleManager.RequestModels.UpdateScheduleReq;
-import sk.scheduleManager.ResponseModels.ScheduleRes;
-import sk.scheduleManager.Services.ScheduleService;
+import sk.scheduleManager.Services.IScheduleService;
 
-import java.text.ParseException;
+
 
 @RestController("/Schedule")
 public class ScheduleController {
 
     @Autowired
-    private ScheduleService scheduleService;
+    private IScheduleService scheduleService;
 
     @PostMapping("/Schedule/CreateNew")
     public ResponseEntity<Object> CreateNewSchedule(@RequestBody NewScheduleReq newScheduleReq) {

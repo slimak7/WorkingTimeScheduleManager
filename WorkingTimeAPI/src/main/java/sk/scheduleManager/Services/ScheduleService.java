@@ -55,7 +55,7 @@ public class ScheduleService implements IScheduleService {
             throw new ScheduleDataAccessException("Record for given employee and date already exists.");
         }
         possible.setEmployee(selectedEmployee);
-        possible.setMonthYear(start.getTime());
+        possible.setMonthYear(startDate);
         var created = recordsRepo.save(possible);
 
         List<DailyWorkingTime> dailyHours = new ArrayList<>();
@@ -81,9 +81,19 @@ public class ScheduleService implements IScheduleService {
                 endTime = new Time(new SimpleDateFormat("hh:mm").parse("0:00").getTime());
             }
             dailyHours.add(new DailyWorkingTime(day.get(Calendar.DAY_OF_MONTH), startTime, endTime));
+
+            Schedule schedule = new Schedule();
+            ScheduleID scheduleID = new ScheduleID();
+            scheduleID.setRecord(created);
+            scheduleID.setDayNumber(day.get(Calendar.DAY_OF_MONTH));
+            schedule.setScheduleID(scheduleID);
+            schedule.setStartTime(startTime);
+            schedule.setEndTime(endTime);
+
+            scheduleRepo.save(schedule);
         }
 
-        return new ScheduleRes(created.getID(), created.getEmployee().getID(), start.getTime(), dailyHours);
+        return new ScheduleRes(created.getID(), created.getEmployee().getID(), startDate, dailyHours);
 
     }
 

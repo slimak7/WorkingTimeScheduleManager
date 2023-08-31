@@ -18,4 +18,9 @@ public interface IRecordsRepo extends JpaRepository<Record, String> {
             "SELECT R FROM Record R WHERE R.ID = ?1"
     )
     Record FindRecordByID(String ID);
+
+    @Query(
+            "SELECT R FROM Record R WHERE R.Employee.ID = ?1"
+    )
+    Collection<Record> FindAllByEmployee(String employeeID);
 }
