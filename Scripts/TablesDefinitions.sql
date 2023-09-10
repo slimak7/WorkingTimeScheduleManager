@@ -10,6 +10,11 @@ begin
 drop table DailySchedule
 end
 
+if exists (select * from WorkingTimeScheduleDB.sys.tables where name = 'ScheduleStats')
+begin
+drop table ScheduleStats
+end
+
 if exists (select * from WorkingTimeScheduleDB.sys.tables where name = 'Records')
 begin
 drop table Records
@@ -38,4 +43,12 @@ DayNumberPK int,
 StartTime time,
 EndTime time,
 primary key (RecordID_PK_FK, DayNumberPK)
+)
+
+create table ScheduleStats(
+RecordID_PK_FK uniqueidentifier foreign key references Records(RecordID),
+TotalMinutes int,
+NumberOfWorkingDays int,
+TotalOvertimeMinutes int,
+primary key (RecordID_PK_FK)
 )

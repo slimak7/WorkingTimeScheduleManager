@@ -29,6 +29,8 @@ public class ScheduleService implements IScheduleService {
     private IRecordsRepo recordsRepo;
     @Autowired
     private IScheduleRepo scheduleRepo;
+    @Autowired
+    private IStatsService statsService;
 
     @Override
     public ScheduleRes CreateNew(NewScheduleReq newScheduleReq) throws ScheduleDataAccessException, ParseException {
@@ -93,6 +95,18 @@ public class ScheduleService implements IScheduleService {
             scheduleRepo.save(schedule);
         }
 
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    statsService.UpdateScheduleStats(created);
+                } catch (ParseException ignored) {
+
+                }
+            }
+        });
+        thread.start();
+
         return new ScheduleRes(created.getID(), created.getEmployee().getID(), startDate, dailyHours);
 
     }
@@ -132,6 +146,18 @@ public class ScheduleService implements IScheduleService {
                 scheduleRepo.save(entry);
             }
         }
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    statsService.UpdateScheduleStats(record);
+                } catch (ParseException ignored) {
+
+                }
+            }
+        });
+        thread.start();
     }
 
     @Override
@@ -159,4 +185,5 @@ public class ScheduleService implements IScheduleService {
             return new ScheduleRes(record.getID(), record.getEmployee().getID(), record.getMonthYear(), dailyHours);
         }
     }
+
 }
