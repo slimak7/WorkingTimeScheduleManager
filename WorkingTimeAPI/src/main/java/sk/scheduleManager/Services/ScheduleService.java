@@ -51,7 +51,7 @@ public class ScheduleService implements IScheduleService {
 
         possible.setEmployee(selectedEmployee);
 
-        var records = recordsRepo.FindRecordByUserDate(possible.getEmployee().getID(), start.get(Calendar.MONTH) + 1, start.get(Calendar.YEAR));
+        var records = recordsRepo.GetRecordByUserDate(possible.getEmployee().getID(), start.get(Calendar.MONTH) + 1, start.get(Calendar.YEAR));
 
         if (!records.isEmpty()) {
             throw new ScheduleDataAccessException("Record for given employee and date already exists.");
@@ -114,7 +114,7 @@ public class ScheduleService implements IScheduleService {
     @Override
     public void Update(UpdateScheduleReq updateScheduleReq) throws ScheduleDataAccessException {
 
-        var record = recordsRepo.FindRecordByID(updateScheduleReq.RecordID);
+        var record = recordsRepo.GetRecordByID(updateScheduleReq.RecordID);
 
         if (record == null) {
             throw  new ScheduleDataAccessException("There is no record with given ID.");
@@ -163,7 +163,7 @@ public class ScheduleService implements IScheduleService {
     @Override
     public ScheduleRes GetByID(String recordID) throws ScheduleDataAccessException {
 
-        var record = recordsRepo.FindRecordByID(recordID);
+        var record = recordsRepo.GetRecordByID(recordID);
 
         if (record == null) {
             throw new ScheduleDataAccessException("There is no record for given ID.");

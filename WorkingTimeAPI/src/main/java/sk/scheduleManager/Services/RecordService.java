@@ -1,6 +1,8 @@
 package sk.scheduleManager.Services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import sk.scheduleManager.Exceptions.ScheduleDataAccessException;
 import sk.scheduleManager.Repos.IRecordsRepo;
@@ -16,9 +18,10 @@ public class RecordService implements IRecordService{
     @Autowired
     private IRecordsRepo recordsRepo;
     @Override
-    public RecordsRes GetRecordsForEmployee(String employeeID) throws ScheduleDataAccessException {
+    public RecordsRes GetRecordsForEmployee(String employeeID, int pageNumber, int count) throws ScheduleDataAccessException {
 
-        var records = recordsRepo.FindAllByEmployee(employeeID);
+
+        var records = recordsRepo.GetAllByEmployee(employeeID, PageRequest.of(pageNumber, count).withSort(Sort.by("MonthYear").ascending()));
 
         if (records.isEmpty()) {
             throw new ScheduleDataAccessException("There are no records for given employee ID.");

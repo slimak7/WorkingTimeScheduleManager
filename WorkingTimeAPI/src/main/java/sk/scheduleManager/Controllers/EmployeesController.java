@@ -4,10 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import sk.scheduleManager.Models.Employee;
 import sk.scheduleManager.RequestModels.EmployeeReq;
 import sk.scheduleManager.ResponseModels.EmployeeRes;
@@ -21,10 +18,10 @@ public class EmployeesController {
     @Autowired
     private IEmployeeService employeeService;
     @GetMapping("/Employees/GetAll")
-    public ResponseEntity<Object> GetAll() {
+    public ResponseEntity<Object> GetAll(@RequestParam(name = "page_number") int pageNumber, @RequestParam(name = "count") int count) {
 
         try {
-            return new ResponseEntity<>(employeeService.GetAll(), HttpStatus.OK);
+            return new ResponseEntity<>(employeeService.GetAll(pageNumber, count), HttpStatus.OK);
         }
         catch (Exception ex) {
             return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

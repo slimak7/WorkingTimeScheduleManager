@@ -46,7 +46,7 @@ public class ScheduleController {
     }
 
     @GetMapping("/Schedule/GetSchedule")
-    public ResponseEntity<Object> GetSchedule(@RequestParam(name = "id") String recordID) {
+    public ResponseEntity<Object> GetSchedule(@RequestParam(name = "record_id") String recordID) {
 
         try {
             return new ResponseEntity<>(scheduleService.GetByID(recordID) ,HttpStatus.OK);

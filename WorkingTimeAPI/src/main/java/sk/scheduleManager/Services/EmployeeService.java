@@ -1,12 +1,15 @@
 package sk.scheduleManager.Services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.jaxb.SpringDataJaxb;
 import org.springframework.stereotype.Component;
 import sk.scheduleManager.Models.Employee;
 import sk.scheduleManager.Repos.IEmployeesRepo;
 import sk.scheduleManager.RequestModels.EmployeeReq;
 import sk.scheduleManager.ResponseModels.EmployeeRes;
 
+import java.awt.print.Pageable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,9 +20,10 @@ public class EmployeeService implements IEmployeeService {
     private IEmployeesRepo employeesRepo;
 
     @Override
-    public List<EmployeeRes> GetAll() {
+    public List<EmployeeRes> GetAll(int pageNumber, int count) {
 
-        var employees = employeesRepo.findAll();
+        var pageRequest = PageRequest.of(pageNumber, count);
+        var employees = employeesRepo.GetAll(pageRequest);
 
         List<EmployeeRes> employeeResList = new ArrayList<>();
 

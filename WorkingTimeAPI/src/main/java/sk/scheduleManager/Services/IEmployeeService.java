@@ -7,6 +7,6 @@ import sk.scheduleManager.ResponseModels.EmployeeRes;
 import java.util.List;
 
 public interface IEmployeeService {
-    List<EmployeeRes> GetAll();
+    List<EmployeeRes> GetAll(int pageNumber, int count);
     public EmployeeRes Add(EmployeeReq employee);
 }

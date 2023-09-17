@@ -2,10 +2,13 @@ package sk.scheduleManager.Services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import sk.scheduleManager.Exceptions.ScheduleDataAccessException;
 import sk.scheduleManager.Models.Record;
 import sk.scheduleManager.Models.ScheduleStats;
+import sk.scheduleManager.Repos.IRecordsRepo;
 import sk.scheduleManager.Repos.IScheduleRepo;
 import sk.scheduleManager.Repos.IScheduleStatsRepo;
+import sk.scheduleManager.ResponseModels.StatsResponse;
 
 import java.sql.Time;
 import java.text.ParseException;
@@ -18,6 +21,8 @@ public class StatsService implements IStatsService{
 
     @Autowired
     private IScheduleRepo scheduleRepo;
+    @Autowired
+    private IRecordsRepo recordsRepo;
 
     @Autowired
     private IScheduleStatsRepo statsRepo;
@@ -87,5 +92,26 @@ public class StatsService implements IStatsService{
         stats.setTotalOvertimeMinutes(overtimeMinutes);
 
         statsRepo.save(stats);
+    }
+
+    @Override
+    public StatsResponse GetStats(String recordID) throws ScheduleDataAccessException {
+
+        var record = recordsRepo.GetRecordByID(recordID);
+
+        if (record == null) {
+
+            throw new ScheduleDataAccessException("There is no record with given ID");
+        }
+
+        var stats = statsRepo.GetByID(recordID);
+
+        if (stats == null) {
+            throw new ScheduleDataAccessException("There is no stats for given recordID");
+        }
+
+        return new StatsResponse(new sk.scheduleManager.ResponseModels.Record(record.getID(), record.getMonthYear()),
+                stats.getTotalMinutes(), stats.getNumberOfWorkingDays(), stats.getTotalOvertimeMinutes());
+
     }
 }

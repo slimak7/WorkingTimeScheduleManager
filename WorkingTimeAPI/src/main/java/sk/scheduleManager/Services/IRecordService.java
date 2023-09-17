@@ -5,5 +5,5 @@ import sk.scheduleManager.ResponseModels.RecordsRes;
 
 public interface IRecordService {
 
-    RecordsRes GetRecordsForEmployee(String employeeID) throws ScheduleDataAccessException;
+    RecordsRes GetRecordsForEmployee(String employeeID, int pageNumber, int count) throws ScheduleDataAccessException;
 }
