@@ -1,6 +1,6 @@
 package sk.scheduleManager.RequestModels;
 
-import java.util.Date;
+import java.sql.Date;
 
 public class NewScheduleReq {
 

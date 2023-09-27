@@ -3,7 +3,8 @@ package sk.scheduleManager.Models;
 import jakarta.persistence.*;
 import org.hibernate.annotations.GenericGenerator;
 
-import java.util.Date;
+import java.sql.Date;
+
 
 @Entity
 @Table(name = "Records")

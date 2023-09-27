@@ -28,7 +28,10 @@ end
 create table Employees(
 EmployeeID uniqueidentifier primary key,
 FirstName varchar(max),
-LastName varchar(max)
+LastName varchar(max),
+Login varchar(max),
+Password varchar(max),
+IsAdmin bit
 )
 
 create table Records(
@@ -52,3 +55,5 @@ NumberOfWorkingDays int,
 TotalOvertimeMinutes int,
 primary key (RecordID_PK_FK)
 )
+
+go
