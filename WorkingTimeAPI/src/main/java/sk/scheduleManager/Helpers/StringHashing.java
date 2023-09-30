@@ -10,16 +10,14 @@ import java.security.spec.KeySpec;
 
 public class StringHashing {
 
-    public static String GetPBKDF2(String text) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    public static byte[] GetPBKDF2(String text) throws NoSuchAlgorithmException, InvalidKeySpecException {
 
-        var saltKey = "ggbJJkon252_kllp";
+        var saltKey = "bnj85";
         byte[] salt = saltKey.getBytes();
 
-        KeySpec spec = new PBEKeySpec(text.toCharArray(), salt, 65536, 128);
+        KeySpec spec = new PBEKeySpec(text.toCharArray(), salt, 11452, 128);
         SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
 
-        byte[] hash = factory.generateSecret(spec).getEncoded();
-
-        return new String(hash, StandardCharsets.UTF_8);
+        return factory.generateSecret(spec).getEncoded();
     }
 }

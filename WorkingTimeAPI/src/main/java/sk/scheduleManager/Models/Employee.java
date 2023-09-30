@@ -22,7 +22,7 @@ public class Employee {
     @Column(name = "Login")
     private String Login;
     @Column(name = "Password")
-    private String Password;
+    private byte[] Password;
     @Column(name = "IsAdmin")
     private boolean IsAdmin;
 
@@ -38,11 +38,11 @@ public class Employee {
         Login = login;
     }
 
-    public String getPassword() {
+    public byte[] getPassword() {
         return Password;
     }
 
-    public void setPassword(String password) {
+    public void setPassword(byte[] password) {
         Password = password;
     }
 

@@ -30,7 +30,7 @@ EmployeeID uniqueidentifier primary key,
 FirstName varchar(max),
 LastName varchar(max),
 Login varchar(max),
-Password varchar(max),
+Password varbinary(max),
 IsAdmin bit
 )
 

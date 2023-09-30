@@ -8,7 +8,7 @@ import sk.scheduleManager.Models.ScheduleStats;
 import sk.scheduleManager.Repos.IRecordsRepo;
 import sk.scheduleManager.Repos.IScheduleRepo;
 import sk.scheduleManager.Repos.IScheduleStatsRepo;
-import sk.scheduleManager.ResponseModels.StatsResponse;
+import sk.scheduleManager.ResponseModels.StatsRes;
 
 import java.sql.Time;
 import java.text.ParseException;
@@ -95,7 +95,7 @@ public class StatsService implements IStatsService{
     }
 
     @Override
-    public StatsResponse GetStats(String recordID) throws ScheduleDataAccessException {
+    public StatsRes GetStats(String recordID) throws ScheduleDataAccessException {
 
         var record = recordsRepo.GetRecordByID(recordID);
 
@@ -110,7 +110,7 @@ public class StatsService implements IStatsService{
             throw new ScheduleDataAccessException("There is no stats for given recordID");
         }
 
-        return new StatsResponse(new sk.scheduleManager.ResponseModels.Record(record.getID(), record.getMonthYear()),
+        return new StatsRes(new sk.scheduleManager.ResponseModels.Record(record.getID(), record.getMonthYear()),
                 stats.getTotalMinutes(), stats.getNumberOfWorkingDays(), stats.getTotalOvertimeMinutes());
 
     }

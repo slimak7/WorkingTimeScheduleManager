@@ -5,8 +5,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sk.scheduleManager.Exceptions.ScheduleAuthException;
+import sk.scheduleManager.Exceptions.ScheduleDataAccessException;
 import sk.scheduleManager.Models.Employee;
 import sk.scheduleManager.RequestModels.EmployeeReq;
+import sk.scheduleManager.RequestModels.LogInReq;
 import sk.scheduleManager.ResponseModels.EmployeeRes;
 import sk.scheduleManager.Services.*;
 
@@ -22,6 +25,9 @@ public class EmployeesController {
 
         try {
             return new ResponseEntity<>(employeeService.GetAll(pageNumber, count), HttpStatus.OK);
+        }
+        catch (ScheduleDataAccessException ex) {
+            return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
         catch (Exception ex) {
             return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -40,5 +46,21 @@ public class EmployeesController {
             return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
+    }
+
+
+    @PostMapping("/Employees/LogIn")
+    public ResponseEntity<Object> LogIn(@RequestBody LogInReq logInReq) {
+
+        try {
+
+            return new ResponseEntity<>(employeeService.LogIn(logInReq), HttpStatus.OK);
+        }
+        catch (ScheduleAuthException ex) {
+            return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+        catch (Exception ex) {
+            return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

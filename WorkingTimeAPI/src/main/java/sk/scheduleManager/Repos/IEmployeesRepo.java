@@ -20,4 +20,9 @@ public interface IEmployeesRepo extends JpaRepository<Employee, String> {
             "SELECT E FROM Employee E"
     )
     Collection<Employee> GetAll(PageRequest pageRequest);
+
+    @Query(
+            "SELECT E FROM Employee E WHERE E.Login = ?1"
+    )
+    Employee GetByLogin(String login);
 }
