@@ -29,6 +29,8 @@ public class EmployeeService implements IEmployeeService {
     @Autowired
     private IEmployeesRepo employeesRepo;
 
+    @Autowired
+    private JWTManager jwtManager;
 
     @Override
     public List<EmployeeRes> GetAll(int pageNumber, int count) throws ScheduleDataAccessException {
@@ -79,7 +81,7 @@ public class EmployeeService implements IEmployeeService {
             throw new ScheduleAuthException("Provided data is incorrect.");
         }
 
-        var token = JWTManager.GenerateToken(employee);
+        var token = jwtManager.GenerateToken(employee);
 
         return new JwtTokenRes(token);
     }

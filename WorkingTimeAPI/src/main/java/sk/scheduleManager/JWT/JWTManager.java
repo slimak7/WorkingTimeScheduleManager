@@ -15,11 +15,12 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import sk.scheduleManager.Models.Employee;
 
+@Component
 public class JWTManager {
 
     public static final long JWT_TOKEN_VALIDITY = 60 * 60;
 
-    private static final String secret = "558kklopnnbh2222222222222222222222222455555555555jjjjjjnnnhgggggggggggkkkkkk" +
+    private final String secret = "558kklopnnbh2222222222222222222222222455555555555jjjjjjnnnhgggggggggggkkkkkk" +
             "kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkmmmmmmmmmujhgttffffffffffffffffffffffcccccccc7856588";
 
     //retrieve username from jwt token
@@ -52,14 +53,14 @@ public class JWTManager {
     }
 
 
-    public static String GenerateToken(Employee employee) {
+    public String GenerateToken(Employee employee) {
         Map<String, Object> claims = new HashMap<>();
         String position = employee.isAdmin() ? "admin" : "default";
         claims.put("userType", position);
         return DoGenerateToken(claims, employee.getLogin());
     }
 
-    private static String DoGenerateToken(Map<String, Object> claims, String subject) {
+    private String DoGenerateToken(Map<String, Object> claims, String subject) {
 
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
