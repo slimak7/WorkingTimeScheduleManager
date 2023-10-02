@@ -5,6 +5,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.config.annotation.web.AbstractRequestMatcherRegistry;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -12,6 +14,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.annotation.web.configurers.AbstractAuthenticationFilterConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
 import org.springframework.security.web.authentication.AuthenticationFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
@@ -42,12 +45,28 @@ public class SecuritySettings {
     public SecurityFilterChain FilterChain(HttpSecurity http) throws Exception {
 
 
-        http.authorizeRequests(x -> x.requestMatchers("**").permitAll().anyRequest().authenticated())
+        http.authorizeRequests(x -> x.requestMatchers("Employees/Add").hasAuthority(UserRoles.ADMIN.GetRoleName())
+                        .anyRequest().authenticated())
             .sessionManagement(x -> x.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .addFilterBefore(GetAuthFilter(), BasicAuthenticationFilter.class);
 
         http.csrf().disable();
 
         return http.build();
+    }
+
+    @Bean
+    public RoleHierarchy RoleHierarchy() {
+        RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
+        String hierarchy = UserRoles.ADMIN.GetRoleName() + " > " + UserRoles.DEFAULT.GetRoleName();
+        roleHierarchy.setHierarchy(hierarchy);
+        return roleHierarchy;
+    }
+
+    @Bean
+    public DefaultWebSecurityExpressionHandler WebSecurityExpressionHandler() {
+        DefaultWebSecurityExpressionHandler expressionHandler = new DefaultWebSecurityExpressionHandler();
+        expressionHandler.setRoleHierarchy(RoleHierarchy());
+        return expressionHandler;
     }
 }

@@ -83,6 +83,7 @@ public class EmployeeService implements IEmployeeService {
 
         var token = jwtManager.GenerateToken(employee);
 
-        return new JwtTokenRes(token);
+        return new JwtTokenRes(token, new EmployeeRes(employee.getID(), employee.getFirstName(), employee.getLastName(),
+                employee.getLogin(), employee.isAdmin()));
     }
 }

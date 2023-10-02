@@ -22,6 +22,8 @@ import sk.scheduleManager.Repos.IEmployeesRepo;
 import javax.management.relation.Role;
 import java.io.Console;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 
 @Component
 public class AuthReqFilter extends OncePerRequestFilter {
@@ -53,8 +55,11 @@ public class AuthReqFilter extends OncePerRequestFilter {
 
                         if (jwtManager.ValidateToken(token, employee)) {
 
+                            var authorities = new ArrayList<SimpleGrantedAuthority>();
+                            authorities.add(new SimpleGrantedAuthority(employee.isAdmin() ? UserRoles.ADMIN.GetRoleName() : UserRoles.DEFAULT.GetRoleName()));
+
                             UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-                                    new SimpleGrantedAuthority("Default"), employee, null);
+                                    employee, null, authorities);
                             usernamePasswordAuthenticationToken
                                     .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
