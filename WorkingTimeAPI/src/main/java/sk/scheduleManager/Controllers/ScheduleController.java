@@ -58,4 +58,17 @@ public class ScheduleController {
         }
     }
 
+    @GetMapping("/Schedule/GetCurrentForEmployee")
+    public ResponseEntity<Object> GetCurrentScheduleForEmployee(@RequestParam(name = "employee_id") String employeeID) {
+
+        try {
+            return new ResponseEntity<>(scheduleService.GetCurrentScheduleForEmployee(employeeID), HttpStatus.OK);
+        }
+        catch (ScheduleDataAccessException ex) {
+            return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+        catch (Exception ex) {
+            return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

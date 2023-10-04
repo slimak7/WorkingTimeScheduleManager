@@ -53,7 +53,7 @@ public class ScheduleService implements IScheduleService {
 
         var records = recordsRepo.GetRecordByUserDate(possible.getEmployee().getID(), start.get(Calendar.MONTH) + 1, start.get(Calendar.YEAR));
 
-        if (!records.isEmpty()) {
+        if (records != null) {
             throw new ScheduleDataAccessException("Record for given employee and date already exists.");
         }
         possible.setEmployee(selectedEmployee);
@@ -184,6 +184,34 @@ public class ScheduleService implements IScheduleService {
 
             return new ScheduleRes(record.getID(), record.getEmployee().getID(), record.getMonthYear(), dailyHours);
         }
+    }
+
+    @Override
+    public ScheduleRes GetCurrentScheduleForEmployee(String employeeID) throws ScheduleDataAccessException {
+
+        var currentDate = Calendar.getInstance();
+        var record = recordsRepo.GetRecordByUserDate(employeeID,
+                currentDate.get(Calendar.MONTH) + 1, currentDate.get(Calendar.YEAR));
+
+        if (record == null) {
+
+            throw new ScheduleDataAccessException("There is no record for current schedule for given employee ID");
+        }
+
+        var schedule = scheduleRepo.GetAllByRecordID(record.getID());
+
+        if (schedule == null) {
+            throw new ScheduleDataAccessException("There is no current schedule for given employee ID");
+        }
+
+        List<DailyWorkingTime> dailyHours = new ArrayList<>();
+
+        for (var day : schedule) {
+
+            dailyHours.add(new DailyWorkingTime(day.getScheduleID().getDayNumber(), day.getStartTime(), day.getEndTime()));
+        }
+
+        return new ScheduleRes(record.getID(), employeeID, record.getMonthYear(), dailyHours);
     }
 
 }

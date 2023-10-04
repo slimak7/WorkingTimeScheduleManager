@@ -7,16 +7,12 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
-import org.springframework.security.config.annotation.web.AbstractRequestMatcherRegistry;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
-import org.springframework.security.config.annotation.web.configurers.AbstractAuthenticationFilterConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
-import org.springframework.security.web.authentication.AuthenticationFilter;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 @Configuration
@@ -26,14 +22,20 @@ public class SecuritySettings {
     @Autowired
     private AuthReqFilter authReqFilter;
 
-    private static final String[] endpointsToPermit = {
+    private static final String[] endpointsToIgnoreAuth = {
             "/Employees/LogIn"
+    };
+
+    private static final String[] endpointAvailableForAdmin = {
+          "/Employees/Add",
+          "/Schedule/CreateNew",
+          "/Schedule/GetSchedule"
     };
 
     @Bean
     public WebSecurityCustomizer WebSecurityCustomizer() {
 
-        return (web) -> web.ignoring().requestMatchers(endpointsToPermit);
+        return (web) -> web.ignoring().requestMatchers(endpointsToIgnoreAuth);
     }
 
     @Bean
@@ -45,7 +47,7 @@ public class SecuritySettings {
     public SecurityFilterChain FilterChain(HttpSecurity http) throws Exception {
 
 
-        http.authorizeRequests(x -> x.requestMatchers("Employees/Add").hasAuthority(UserRoles.ADMIN.GetRoleName())
+        http.authorizeRequests(x -> x.requestMatchers(endpointAvailableForAdmin).hasAuthority(UserRoles.ADMIN.GetRoleName())
                         .anyRequest().authenticated())
             .sessionManagement(x -> x.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .addFilterBefore(GetAuthFilter(), BasicAuthenticationFilter.class);

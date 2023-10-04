@@ -12,7 +12,7 @@ public interface IRecordsRepo extends JpaRepository<Record, String> {
     @Query(
             "SELECT R FROM Record R WHERE R.Employee.ID = ?1 AND MONTH(R.MonthYear) = ?2 AND YEAR(R.MonthYear) = ?3"
     )
-    Collection<Record> GetRecordByUserDate(String employeeID, int month, int year);
+    Record GetRecordByUserDate(String employeeID, int month, int year);
 
     @Query(
             "SELECT R FROM Record R WHERE R.ID = ?1"
